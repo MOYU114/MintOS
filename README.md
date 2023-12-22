@@ -4,7 +4,7 @@
 
 ## 使用说明
 
-调用时直接输入`$ sh bash.sh`，因为多需要make cmd文件。
+调用时直接输入`$ sh bash.sh`，因为多需要make command文件。
 
 遇到
 
