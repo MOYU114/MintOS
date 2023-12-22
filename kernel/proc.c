@@ -328,157 +328,154 @@ PRIVATE int msg_send(struct proc* current, int dest, MESSAGE* m)
  * 
  * @return  Zero if success.
  *****************************************************************************/
-PRIVATE int msg_receive(struct proc* current, int src, MESSAGE* m)
-{
-	struct proc* p_who_wanna_recv = current; /**
-						  * This name is a little bit
-						  * wierd, but it makes me
-						  * think clearly, so I keep
-						  * it.
-						  */
-	struct proc* p_from = 0; /* from which the message will be fetched */
-	struct proc* prev = 0;
-	int copyok = 0;
+PRIVATE int msg_receive(struct proc* current, int src, MESSAGE* m) {
+    struct proc* p_who_wanna_recv = current; /**
+                                              * This name is a little bit
+                                              * wierd, but it makes me
+                                              * think clearly, so I keep
+                                              * it.
+                                              */
+    struct proc* p_from = 0; /* from which the message will be fetched */
+    struct proc* prev = 0;
+    int copyok = 0;
 
-	assert(proc2pid(p_who_wanna_recv) != src);
+    assert(proc2pid(p_who_wanna_recv) != src);
 
-	if ((p_who_wanna_recv->has_int_msg) &&
-	    ((src == ANY) || (src == INTERRUPT))) {
-		/* There is an interrupt needs p_who_wanna_recv's handling and
-		 * p_who_wanna_recv is ready to handle it.
-		 */
+    if ((p_who_wanna_recv->has_int_msg) &&
+        ((src == ANY) || (src == INTERRUPT))) {
+        /* There is an interrupt needs p_who_wanna_recv's handling and
+         * p_who_wanna_recv is ready to handle it.
+         */
 
-		MESSAGE msg;
-		reset_msg(&msg);
-		msg.source = INTERRUPT;
-		msg.type = HARD_INT;
+        disable_int();
+        MESSAGE msg;
+        reset_msg(&msg);
+        msg.source = INTERRUPT;
+        msg.type = HARD_INT;
 
-		assert(m);
+        assert(m);
 
-		phys_copy(va2la(proc2pid(p_who_wanna_recv), m), &msg,
-			  sizeof(MESSAGE));
+        phys_copy(va2la(proc2pid(p_who_wanna_recv), m), &msg, sizeof(MESSAGE));
 
-		p_who_wanna_recv->has_int_msg = 0;
+        p_who_wanna_recv->has_int_msg = 0;
 
-		assert(p_who_wanna_recv->p_flags == 0);
-		assert(p_who_wanna_recv->p_msg == 0);
-		assert(p_who_wanna_recv->p_sendto == NO_TASK);
-		assert(p_who_wanna_recv->has_int_msg == 0);
+        assert(p_who_wanna_recv->p_flags == 0);
+        assert(p_who_wanna_recv->p_msg == 0);
+        assert(p_who_wanna_recv->p_sendto == NO_TASK);
+        assert(p_who_wanna_recv->has_int_msg == 0);
 
-		return 0;
-	}
+        enable_int();
+        return 0;
+    }
 
+    disable_int();
+    /* Arrives here if no interrupt for p_who_wanna_recv. */
+    if (src == ANY) {
+        /* p_who_wanna_recv is ready to receive messages from
+         * ANY proc, we'll check the sending queue and pick the
+         * first proc in it.
+         */
+        if (p_who_wanna_recv->q_sending) {
+            p_from = p_who_wanna_recv->q_sending;
+            copyok = 1;
 
-	/* Arrives here if no interrupt for p_who_wanna_recv. */
-	if (src == ANY) {
-		/* p_who_wanna_recv is ready to receive messages from
-		 * ANY proc, we'll check the sending queue and pick the
-		 * first proc in it.
-		 */
-		if (p_who_wanna_recv->q_sending) {
-			p_from = p_who_wanna_recv->q_sending;
-			copyok = 1;
+            assert(p_who_wanna_recv->p_flags == 0);
+            assert(p_who_wanna_recv->p_msg == 0);
+            assert(p_who_wanna_recv->p_recvfrom == NO_TASK);
+            assert(p_who_wanna_recv->p_sendto == NO_TASK);
+            assert(p_who_wanna_recv->q_sending != 0);
+            assert(p_from->p_flags == SENDING);
+            assert(p_from->p_msg != 0);
+            assert(p_from->p_recvfrom == NO_TASK);
+            assert(p_from->p_sendto == proc2pid(p_who_wanna_recv));
+        }
+    } else if (src >= 0 && src < NR_TASKS + NR_PROCS) {
+        /* p_who_wanna_recv wants to receive a message from
+         * a certain proc: src.
+         */
+        p_from = &proc_table[src];
 
-			assert(p_who_wanna_recv->p_flags == 0);
-			assert(p_who_wanna_recv->p_msg == 0);
-			assert(p_who_wanna_recv->p_recvfrom == NO_TASK);
-			assert(p_who_wanna_recv->p_sendto == NO_TASK);
-			assert(p_who_wanna_recv->q_sending != 0);
-			assert(p_from->p_flags == SENDING);
-			assert(p_from->p_msg != 0);
-			assert(p_from->p_recvfrom == NO_TASK);
-			assert(p_from->p_sendto == proc2pid(p_who_wanna_recv));
-		}
-	}
-	else if (src >= 0 && src < NR_TASKS + NR_PROCS) {
-		/* p_who_wanna_recv wants to receive a message from
-		 * a certain proc: src.
-		 */
-		p_from = &proc_table[src];
+        if ((p_from->p_flags & SENDING) &&
+            (p_from->p_sendto == proc2pid(p_who_wanna_recv))) {
+            /* Perfect, src is sending a message to
+             * p_who_wanna_recv.
+             */
+            copyok = 1;
 
-		if ((p_from->p_flags & SENDING) &&
-		    (p_from->p_sendto == proc2pid(p_who_wanna_recv))) {
-			/* Perfect, src is sending a message to
-			 * p_who_wanna_recv.
-			 */
-			copyok = 1;
+            struct proc* p = p_who_wanna_recv->q_sending;
 
-			struct proc* p = p_who_wanna_recv->q_sending;
+            assert(p); /* p_from must have been appended to the
+                        * queue, so the queue must not be NULL
+                        */
 
-			assert(p); /* p_from must have been appended to the
-				    * queue, so the queue must not be NULL
-				    */
+            while (p) {
+                assert(p_from->p_flags & SENDING);
 
-			while (p) {
-				assert(p_from->p_flags & SENDING);
+                if (proc2pid(p) == src) /* if p is the one */
+                    break;
 
-				if (proc2pid(p) == src) /* if p is the one */
-					break;
+                prev = p;
+                p = p->next_sending;
+            }
 
-				prev = p;
-				p = p->next_sending;
-			}
+            assert(p_who_wanna_recv->p_flags == 0);
+            assert(p_who_wanna_recv->p_msg == 0);
+            assert(p_who_wanna_recv->p_recvfrom == NO_TASK);
+            assert(p_who_wanna_recv->p_sendto == NO_TASK);
+            assert(p_who_wanna_recv->q_sending != 0);
+            assert(p_from->p_flags == SENDING);
+            assert(p_from->p_msg != 0);
+            assert(p_from->p_recvfrom == NO_TASK);
+            assert(p_from->p_sendto == proc2pid(p_who_wanna_recv));
+        }
+    }
 
-			assert(p_who_wanna_recv->p_flags == 0);
-			assert(p_who_wanna_recv->p_msg == 0);
-			assert(p_who_wanna_recv->p_recvfrom == NO_TASK);
-			assert(p_who_wanna_recv->p_sendto == NO_TASK);
-			assert(p_who_wanna_recv->q_sending != 0);
-			assert(p_from->p_flags == SENDING);
-			assert(p_from->p_msg != 0);
-			assert(p_from->p_recvfrom == NO_TASK);
-			assert(p_from->p_sendto == proc2pid(p_who_wanna_recv));
-		}
-	}
+    if (copyok) {
+        /* It's determined from which proc the message will
+         * be copied. Note that this proc must have been
+         * waiting for this moment in the queue, so we should
+         * remove it from the queue.
+         */
+        if (p_from == p_who_wanna_recv->q_sending) { /* the 1st one */
+            assert(prev == 0);
+            p_who_wanna_recv->q_sending = p_from->next_sending;
+            p_from->next_sending = 0;
+        } else {
+            assert(prev);
+            prev->next_sending = p_from->next_sending;
+            p_from->next_sending = 0;
+        }
 
-	if (copyok) {
-		/* It's determined from which proc the message will
-		 * be copied. Note that this proc must have been
-		 * waiting for this moment in the queue, so we should
-		 * remove it from the queue.
-		 */
-		if (p_from == p_who_wanna_recv->q_sending) { /* the 1st one */
-			assert(prev == 0);
-			p_who_wanna_recv->q_sending = p_from->next_sending;
-			p_from->next_sending = 0;
-		}
-		else {
-			assert(prev);
-			prev->next_sending = p_from->next_sending;
-			p_from->next_sending = 0;
-		}
+        assert(m);
+        assert(p_from->p_msg);
 
-		assert(m);
-		assert(p_from->p_msg);
+        /* copy the message */
+        phys_copy(va2la(proc2pid(p_who_wanna_recv), m),
+                  va2la(proc2pid(p_from), p_from->p_msg), sizeof(MESSAGE));
 
-		/* copy the message */
-		phys_copy(va2la(proc2pid(p_who_wanna_recv), m),
-			  va2la(proc2pid(p_from), p_from->p_msg),
-			  sizeof(MESSAGE));
+        p_from->p_msg = 0;
+        p_from->p_sendto = NO_TASK;
+        p_from->p_flags &= ~SENDING;
+        unblock(p_from);
+    } else { /* nobody's sending any msg */
+        /* Set p_flags so that p_who_wanna_recv will not
+         * be scheduled until it is unblocked.
+         */
+        p_who_wanna_recv->p_flags |= RECEIVING;
 
-		p_from->p_msg = 0;
-		p_from->p_sendto = NO_TASK;
-		p_from->p_flags &= ~SENDING;
-		unblock(p_from);
-	}
-	else {  /* nobody's sending any msg */
-		/* Set p_flags so that p_who_wanna_recv will not
-		 * be scheduled until it is unblocked.
-		 */
-		p_who_wanna_recv->p_flags |= RECEIVING;
+        p_who_wanna_recv->p_msg = m;
+        p_who_wanna_recv->p_recvfrom = src;
+        block(p_who_wanna_recv);
 
-		p_who_wanna_recv->p_msg = m;
-		p_who_wanna_recv->p_recvfrom = src;
-		block(p_who_wanna_recv);
+        assert(p_who_wanna_recv->p_flags == RECEIVING);
+        assert(p_who_wanna_recv->p_msg != 0);
+        assert(p_who_wanna_recv->p_recvfrom != NO_TASK);
+        assert(p_who_wanna_recv->p_sendto == NO_TASK);
+        assert(p_who_wanna_recv->has_int_msg == 0);
+    }
 
-		assert(p_who_wanna_recv->p_flags == RECEIVING);
-		assert(p_who_wanna_recv->p_msg != 0);
-		assert(p_who_wanna_recv->p_recvfrom != NO_TASK);
-		assert(p_who_wanna_recv->p_sendto == NO_TASK);
-		assert(p_who_wanna_recv->has_int_msg == 0);
-	}
-
-	return 0;
+    enable_int();
+    return 0;
 }
 
 /*****************************************************************************

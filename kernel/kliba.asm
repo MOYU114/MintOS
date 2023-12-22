@@ -34,7 +34,9 @@ global	glitter
 disp_str:
 	push	ebp
 	mov	ebp, esp
-
+    push ebx    
+    push esi
+    push edi
 	mov	esi, [ebp + 8]	; pszInfo
 	mov	edi, [disp_pos]
 	mov	ah, 0Fh
@@ -63,6 +65,9 @@ disp_str:
 .2:
 	mov	[disp_pos], edi
 
+    pop edi
+    pop esi
+    pop ebx
 	pop	ebp
 	ret
 
@@ -72,7 +77,9 @@ disp_str:
 disp_color_str:
 	push	ebp
 	mov	ebp, esp
-
+    push ebx    
+    push esi
+    push edi
 	mov	esi, [ebp + 8]	; pszInfo
 	mov	edi, [disp_pos]
 	mov	ah, [ebp + 12]	; color
@@ -101,6 +108,9 @@ disp_color_str:
 .2:
 	mov	[disp_pos], edi
 
+	pop edi
+    pop esi
+    pop ebx
 	pop	ebp
 	ret
 
