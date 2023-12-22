@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 cd command
 make install
 cd ..
