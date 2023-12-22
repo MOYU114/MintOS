@@ -15,3 +15,6 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 
 是因为bochs没有正常退出，把目录下的`80m.img.lock`删除后再调用bash.sh即可。
 
+## This makes no sense
+只是展示一下我可以**随时随地***push*
+
