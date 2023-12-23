@@ -18,5 +18,5 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 ## This makes no sense
 只是展示一下我可以**随时随地***push*
 
-## This makes no sense too
+## This makes no sense, too
 只是展示一下我**也**可以**随时随地***push*
