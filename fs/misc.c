@@ -81,6 +81,56 @@ PUBLIC int do_stat()
 }
 
 /*****************************************************************************
+ *                                do_list
+ *****************************************************************************/
+/**
+ * list all the file in the current directory
+ *
+ * @return  On success, zero is returned. On error, -1 is returned.
+ *****************************************************************************/
+PUBLIC int do_list()
+{
+	int i, j;
+
+	char filename[MAX_PATH];
+	int src = fs_msg.source;
+	memset(filename, 0, MAX_FILENAME_LEN);
+	struct inode * dir_inode;
+	if (strip_path(filename, "/", &dir_inode) != 0)
+		return -1;
+
+	int dir_blk0_nr = dir_inode->i_start_sect;
+	int nr_dir_blks = (dir_inode->i_size + SECTOR_SIZE - 1) / SECTOR_SIZE;
+	int nr_dir_entries =
+	  dir_inode->i_size / DIR_ENTRY_SIZE; /**
+					       * including unused slots
+					       * (the file has been deleted
+					       * but the slot is still there)
+					       */
+
+	fs_msg.CNT = nr_dir_entries;
+
+	int m = 0;
+	struct dir_entry * pde;
+	for (i = 0; i < nr_dir_blks; i++) {
+		RD_SECT(dir_inode->i_dev, dir_blk0_nr + i);
+		pde = (struct dir_entry *)fsbuf;
+		for (j = 0; j < SECTOR_SIZE / DIR_ENTRY_SIZE; j++,pde++) {
+			phys_copy((void*)va2la(src, fs_msg.BUF+j*DIR_ENTRY_SIZE), /* to   */
+		  				(void*)pde,	 /* from */
+		  				DIR_ENTRY_SIZE);
+			if (++m > nr_dir_entries)
+				break;
+		}
+		if (m > nr_dir_entries) /* all entries have been iterated */
+			break;
+	}
+
+	
+	return 0;
+}
+
+/*****************************************************************************
  *                                search_file
  *****************************************************************************/
 /**

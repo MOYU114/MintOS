@@ -93,6 +93,7 @@ PUBLIC int		do_unlink();
 
 /* fs/misc.c */
 PUBLIC int		do_stat();
+PUBLIC int		do_list();
 PUBLIC int		strip_path(char * filename, const char * pathname,
 				   struct inode** ppinode);
 PUBLIC int		search_file(char * path);

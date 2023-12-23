@@ -45,3 +45,30 @@ PUBLIC int stat(const char *path, struct stat *buf)
 
 	return msg.RETVAL;
 }
+
+PUBLIC int list()
+{
+	MESSAGE msg;
+
+	char buf[DIR_ENTRY_SIZE*32];
+
+	msg.type = LIST;
+
+	msg.BUF = (void*)buf;
+
+	send_recv(BOTH, TASK_FS, &msg);
+	assert(msg.type == SYSCALL_RET);
+
+	printf("INODE\t\t  FILENAME\n");
+	printf("-----                ------------\n");
+	struct dir_entry * pde = (struct dir_entry *)msg.BUF;
+	int i;
+	char filename[MAX_FILENAME_LEN+1] = {0};
+	for(i = 0; i < msg.CNT; i++) {
+		memcpy((void*)filename, (void*)pde->name, MAX_FILENAME_LEN);
+		printf("%5d\t\t%s\n", pde->inode_nr, filename);
+		pde++;
+	}
+
+	return msg.RETVAL;
+}
