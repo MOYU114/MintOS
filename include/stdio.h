@@ -151,6 +151,9 @@ PUBLIC int  list        ();
 /* lib/syslog.c */
 PUBLIC	int	syslog		(const char *fmt, ...);
 
+/* lib/echo.c */
+PUBLIC void  echo_string(int argc, char * argv[]);
+
 
 
 
