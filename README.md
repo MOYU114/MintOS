@@ -30,7 +30,7 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 
 # shell多任务说明
 
-多个任务间用**|**隔开即可
+多个任务间用 **|** 隔开即可
 
 ## This makes no sense
 只是展示一下我可以**随时随地***push*
