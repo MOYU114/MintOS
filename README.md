@@ -28,7 +28,7 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 - `rm`：用于删除文件，可以多个文件名并列
 - `touch`：用于创建新文件，可以多个文件名并列
 
-# shell多任务说明
+## shell多任务说明
 
 多个任务间用 **|** 隔开即可
 
