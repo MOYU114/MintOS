@@ -24,13 +24,14 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 
 ## 可执行程序说明
 
+- `mintos`：展示欢迎界面
 - `list`：用于展示当前目录下的所有文件
 - `rm`：用于删除文件，可以多个文件名并列
 - `touch`：用于创建新文件，可以多个文件名并列
 
-## shell多任务说明
+# shell多任务说明
 
-多个任务间用 **|** 隔开即可
+多个任务间用**|**隔开即可
 
 ## This makes no sense
 只是展示一下我可以**随时随地***push*
