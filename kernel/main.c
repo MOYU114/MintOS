@@ -284,25 +284,46 @@ void shabby_shell(const char * tty_name)
 		} while(ch);
 		argv[argc] = 0;
 
-		int fd = open(argv[0], O_RDWR);
-		if (fd == -1) {
-			if (rdbuf[0]) {
-				write(1, "{", 1);
-				write(1, rdbuf, r);
-				write(1, "}\n", 2);
+		/****************************************************/
+		char * childArgv[PROC_ORIGIN_STACK];
+		// the count of the child process
+		int cnt = 0;
+		int i, index;
+
+		for (i = 0 ; i < argc; i++) {
+			index = 0;
+			memset(childArgv, 0, sizeof(childArgv));
+			while(strcmp(argv[i], "|") != 0 && i < argc) {
+				childArgv[index++] = argv[i++];
+			}
+			int fd = open(childArgv[0], O_RDWR);
+			if (fd == -1) {
+				if (rdbuf[0]) {
+					write(1, "{", 1);
+					write(1, rdbuf, r);
+					write(1, "}\n", 2);
+				}
+			}
+			else {
+				close(fd);
+				cnt++;
+				// delay some time to avoid output disorderly
+				milli_delay(100);
+				int pid = fork();
+				if (pid == 0) { /* child */
+					execv(childArgv[0], childArgv);
+				}
 			}
 		}
-		else {
-			close(fd);
-			int pid = fork();
-			if (pid != 0) { /* parent */
-				int s;
-				wait(&s);
-			}
-			else {	/* child */
-				execv(argv[0], argv);
-			}
+
+		// child process should never arrive here
+		for (;cnt > 0; cnt--) {
+			int s;
+			wait(&s);
 		}
+
+		/***************************************************/
+
 	}
 
 	close(1);

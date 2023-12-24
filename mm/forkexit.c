@@ -33,6 +33,7 @@ PRIVATE void cleanup(struct proc * proc);
  *****************************************************************************/
 PUBLIC int do_fork()
 {
+	disable_int();
 	/* find a free slot in proc_table */
 	struct proc* p = proc_table;
 	int i;
@@ -127,6 +128,8 @@ PUBLIC int do_fork()
 	m.RETVAL = 0;
 	m.PID = 0;
 	send_recv(SEND, child_pid, &m);
+
+	enable_int();
 
 	return 0;
 }

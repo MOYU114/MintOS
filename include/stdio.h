@@ -152,8 +152,9 @@ PUBLIC int  list        ();
 PUBLIC	int	syslog		(const char *fmt, ...);
 
 /* lib/execute.c */
-PUBLIC void  echo_string(int argc, char * argv[]);
+PUBLIC void  echoString(int argc, char * argv[]);
 PUBLIC void  touch(int argc, char * argv[]);
+PUBLIC void  removeFile(int argc, char * argv[]);
 
 
 

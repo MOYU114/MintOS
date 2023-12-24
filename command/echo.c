@@ -2,6 +2,6 @@
 
 int main(int argc, char * argv[])
 {
-	echo_string(argc, argv);
+	echoString(argc, argv);
 	return 0;
 }
