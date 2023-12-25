@@ -17,14 +17,21 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 
 ## 任务进度
 
-- [ ] 整合代码
+- [x] 整合代码
 - [x] 编写可执行程序
 - [x] 扩展shell支持多任务
 - [ ] 实现基于分页的虚拟内存管理
+- [ ] shellcode注入代码
+- [ ] 缓冲区溢出代码
+- [ ] 静态度量
+- [ ] 动态度量
+
 ## 文件说明
 
-- pagesandqueue：实现week10-1
-- shell：实现week10-2、3
+- pagesandqueue：实现week11-1
+- shell：实现week11-2、3
+- attackandprotect：实现week12
+
 ## 可执行程序说明
 
 - `mintos`：展示欢迎界面
