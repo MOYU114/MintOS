@@ -21,7 +21,10 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 - [x] 编写可执行程序
 - [x] 扩展shell支持多任务
 - [ ] 实现基于分页的虚拟内存管理
+## 文件说明
 
+- pagesandqueue：实现week10-1
+- shell：实现week10-2、3
 ## 可执行程序说明
 
 - `mintos`：展示欢迎界面
