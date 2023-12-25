@@ -55,8 +55,8 @@ PUBLIC void clock_handler(int irq)
 
 
 	mulit_queue_schedule();
-    disp_int(p_proc_ready - &FIRST_PROC);
-    disp_str(",");
+    //disp_int(p_proc_ready - &FIRST_PROC);
+    //(",");
 
 }
 

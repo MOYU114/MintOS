@@ -416,7 +416,7 @@ LABEL_PM_START:
 ;;; 	call	DispReturn
 ;;; 	call	DispHDInfo	; int 13h 读出的硬盘 geometry 好像有点不对头，不知道为什么，干脆不管它了
 	call	SetupPaging
-
+	call 	TestAllocAndFree	;test my pages
 	;mov	ah, 0Fh				; 0000: 黑底    1111: 白字
 	;mov	al, 'P'
 	;mov	[gs:((80 * 0 + 39) * 2)], ax	; 屏幕第 0 行, 第 39 列。
@@ -842,6 +842,145 @@ SetupPaging:
 
 	ret
 ; 分页机制启动完毕 ----------------------------------------------------------
+alloc_one_page:    	
+	; 分配一个页
+	; eax返回分配好的物理地址
+					
+	push  ds        ; 保存现场
+	push  es
+	
+	xor eax, eax
+	mov ax, SelectorFlatRW
+	mov es, ax
+	mov ax, SelectorFlatRW
+	mov ds, ax     
+	
+.search:
+	bts  [BitMap], eax    ; 使用bts函数直接在bitmap位图中寻找空闲位,eax记录当前要查询的位置
+	jnc  .find			  ;找到则跳转
+	inc  eax 
+	cmp  eax,BitMapLen*8  ; 比较是否超过位图长度,超过则表示没有空闲
+	jl   .search
+	hlt                   ; 该程序结束
+
+.find:  
+	shl  eax,12           ; 找到,eax左移12位(*4k)
+	pop  es
+	pop  ds
+	ret
+alloc_pages:           ; eax记录页号
+					   ; ebx返回虚拟地址 
+	push ds            ; 保存现场
+	push es
+	
+	mov bx, SelectorFlatRW
+	mov ds, bx
+	mov bx, SelectorFlatRW
+	mov es, bx
+	
+	mov ecx, eax              ; ecx传入eax记录的页号 
+	mov ebx, 4096
+	mul ebx			  ; eax=eax*ebx(4k)页大小
+	
+	mov ebx, [es:AvaLinearAddress] ; 
+	add [es:AvaLinearAddress],eax  ; 更新线性地址，保存eax的内容
+	push ebx                  ; ebx为返回值，直接保存
+	mov  eax, ebx			  ;开始计算页目录项
+	mov  ebx, cr3             ;页目录基地址
+    	  
+	and  eax, 0xffc00000	  	
+	shr  eax, 20			  ;页目录索引
+	and  ebx, 0xfffff000
+	add  ebx, eax             ; ebx得到页目录项的地址。
+	mov  edx, ebx
+	mov  ebx, [ebx]           ; ebx 计算对于页表项
+	
+	test ebx, 0x0000_0001
+	jnz  .pde_exist
+	
+	mov ebx, cr3              ;如果为零，说明该页目录项无效
+	mov ebx, [ebx]            
+	and ebx, 0xfffff000	
+	shl eax, 10               ; eax means the size of used pages
+	add ebx, eax
+	or  ebx, 0x0000_0007
+	mov [edx], ebx
+
+.pde_exist:					;如果该位为一，则将ebx的低 12 位清零，得到页表基址
+	mov eax,[esp]
+	and ebx, 0xfffff000       
+	and eax, 0x003ff000       
+	shr eax, 10               
+	add ebx, eax
+
+.change_pte:				;如果发现了可以分配的连续页，我们就开始把从那里开始的连续物理页与虚拟地址eax开始的连续虚拟页对应起来
+	call alloc_one_page     ;选择一个页一个页
+	or eax, 0x00000007
+	mov [ebx] , eax
+	add ebx, 4
+	loop  .change_pte
+	
+	pop  ebx
+	pop es
+	pop ds
+	ret
+
+free_pages:              ;eax线性地址, ebx页号
+	push ds
+	push es
+	push ebx         
+	push eax
+
+	mov bx, SelectorFlatRW	
+	mov ds, bx
+	mov bx, SelectorFlatRW
+	mov es, bx       ; init
+		
+	;找页表项 页目录项 
+	mov ebx, cr3
+	and ebx, 0xfffff000
+	and eax, 0xffc00000	
+	shr eax, 20      ; 20 = 22 -2 
+	add ebx, eax     
+	mov edx, [ebx]
+	and edx, 0xfffffff8
+	mov [ebx], edx   
+	
+	mov ebx, [ebx]   
+			
+	mov eax, [esp]          ;eax线性地址
+	add esp, 4 
+	and ebx,0xfffff000
+	and eax,0x003ff000
+	shr eax,10
+	add ebx, eax       ;ebx正确页表项
+
+	mov ecx, [esp]          ; ecx页号
+	add esp,4
+.change_pte:                
+	mov eax, [ebx]
+	and eax, 0xfffffff8	
+	mov edx, eax			    ;eax物理地址
+	shr edx, 12
+	btr [BitMap], edx
+	mov [ebx], eax
+	add ebx,32
+	loop .change_pte
+
+	pop es
+	pop ds
+	ret 
+
+TestAllocAndFree:
+	xchg bx,bx
+	mov eax,4
+	call alloc_pages
+	xchg bx,bx
+	mov eax,ebx
+	mov ebx,4
+	call free_pages
+	xchg bx,bx
+	ret
 
 
 
@@ -903,6 +1042,13 @@ _ARDStruct:			; Address Range Descriptor Structure
 	_dwLengthHigh:		dd	0
 	_dwType:		dd	0
 _MemChkBuf:	times	256	db	0
+_PageTableNumber		dd	0
+_BitMap:        times   32      db      0xff    ; low 1mb is occupid
+		times   32      db      0x00    ; 1mb is available
+BitMapLen       equ     $ - _BitMap
+_AvaLinearAddress               dd      0x8000_0000
+_Linear:                        db      0Ah,"Linear Address: ",0
+_Physical:  
 ;
 ;; 保护模式下使用这些符号
 szMemChkTitle		equ	LOADER_PHY_ADDR + _szMemChkTitle
@@ -925,6 +1071,11 @@ ARDStruct		equ	LOADER_PHY_ADDR + _ARDStruct
 	dwLengthHigh	equ	LOADER_PHY_ADDR + _dwLengthHigh
 	dwType		equ	LOADER_PHY_ADDR + _dwType
 MemChkBuf		equ	LOADER_PHY_ADDR + _MemChkBuf
+PageTableNumber		equ	_PageTableNumber- $$
+BitMap                  equ     _BitMap		- $$ 
+AvaLinearAddress        equ     _AvaLinearAddress - $$ 
+Linear                  equ     _Linear          - $$
+Physical                equ     _Physical        - $$
 
 
 ; 堆栈就在数据段的末尾
