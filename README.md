@@ -22,7 +22,7 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 - [x] 扩展shell支持多任务
 - [ ] 实现基于分页的虚拟内存管理
 - [ ] shellcode注入代码
-- [ ] 缓冲区溢出代码
+- [x] 缓冲区溢出代码
 - [ ] 静态度量
 - [ ] 动态度量
 
