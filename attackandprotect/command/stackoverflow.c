@@ -22,6 +22,7 @@ void stackoverflow(){
     int i = 10000;
     while (i--)
         ;
+    for (;;);
     exit(0);
 }
 

@@ -188,7 +188,7 @@ void untar(const char * filename)
 	int chunk = sizeof(buf);
 	int i = 0;
 	int bytes = 0;
-
+	//list_len=0;
 	while (1) {
 		bytes = read(fd, buf, SECTOR_SIZE);
 		assert(bytes == SECTOR_SIZE); /* size of a TAR file
@@ -218,6 +218,8 @@ void untar(const char * filename)
 			return;
 		}
 		printf("    %s\n", phdr->name);
+		//strcpy(file_list[i],phdr->name);
+		//list_len++;
 		while (bytes_left) {
 			int iobytes = min(chunk, bytes_left);
 			read(fd, buf,

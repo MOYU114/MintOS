@@ -47,6 +47,17 @@ PUBLIC void clock_handler(int irq)
 	if (p_proc_ready->ticks > 0) {
 		return;
 	}
+	//check_overflow();
+	if(p_proc_ready - &FIRST_PROC >= 0xb){
+		//disp_str("hello");
+		check_overflow();
+	}
+	//for(int i=0;i<list_len;i++){
+	//	if (!strcmp(p_proc_ready->name,file_list[i])){
+	//		check_overflow();
+	//	}
+
+	//}
 
 	schedule();
 

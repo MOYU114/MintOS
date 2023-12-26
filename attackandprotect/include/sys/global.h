@@ -62,3 +62,6 @@ extern	char *			logbuf;
 extern	const int		LOGBUF_SIZE;
 extern	char *			logdiskbuf;
 extern	const int		LOGDISKBUF_SIZE;
+
+//extern char file_list[100][100];
+//extern int list_len;

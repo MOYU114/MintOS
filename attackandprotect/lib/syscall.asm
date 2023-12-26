@@ -10,11 +10,11 @@
 INT_VECTOR_SYS_CALL equ 0x90
 _NR_printx	    equ 0
 _NR_sendrec	    equ 1
-
+_NR_check_overflow	    equ 2
 ; 导出符号
 global	printx
 global	sendrec
-
+global check_overflow
 bits 32
 [section .text]
 
@@ -53,3 +53,7 @@ printx:
 
 	ret
 
+check_overflow:
+	mov  eax, _NR_check_overflow
+	int  INT_VECTOR_SYS_CALL
+	ret

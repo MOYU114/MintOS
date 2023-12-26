@@ -24,7 +24,7 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 - [ ] shellcode注入代码
 - [x] 缓冲区溢出代码
 - [ ] 静态度量
-- [ ] 动态度量
+- [x] 动态度量
 
 ## 文件说明
 
