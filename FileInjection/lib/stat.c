@@ -46,7 +46,7 @@ PUBLIC int stat(const char *path, struct stat *buf)
 	return msg.RETVAL;
 }
 
-PUBLIC int list()
+PUBLIC char* list()
 {
 	MESSAGE msg;
 
@@ -63,12 +63,18 @@ PUBLIC int list()
 	printf("-----                ------------\n");
 	struct dir_entry * pde = (struct dir_entry *)msg.BUF;
 	int i;
-	char filename[MAX_FILENAME_LEN+1] = {0};
+	static char filename[20 * MAX_FILENAME_LEN + 1];
+	memset(filename, 0, sizeof(filename));
+	char crtfilename[MAX_FILENAME_LEN + 1] = {0};
+	
 	for(i = 0; i < msg.CNT; i++) {
-		memcpy((void*)filename, (void*)pde->name, MAX_FILENAME_LEN);
-		printf("%5d\t\t%s\n", pde->inode_nr, filename);
+		memcpy(filename + i * MAX_FILENAME_LEN, 
+				pde->name, 
+				MAX_FILENAME_LEN);
+		memcpy((void*)crtfilename, (void*)pde->name, MAX_FILENAME_LEN);
+		printf("%5d\t\t%s\n", pde->inode_nr, crtfilename);
 		pde++;
 	}
 
-	return msg.RETVAL;
+	return filename;
 }

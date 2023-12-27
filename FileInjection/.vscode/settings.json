@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "elf.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "inject.h": "c"
     }
 }
