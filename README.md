@@ -21,7 +21,7 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 - [x] 编写可执行程序
 - [x] 扩展shell支持多任务
 - [ ] 实现基于分页的虚拟内存管理
-- [ ] shellcode注入代码
+- [X] shellcode注入代码
 - [x] 缓冲区溢出代码
 - [ ] 静态度量
 - [x] 动态度量
@@ -38,6 +38,7 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 - `list`：用于展示当前目录下的所有文件
 - `rm`：用于删除文件，可以多个文件名并列
 - `touch`：用于创建新文件，可以多个文件名并列
+- `inject`:向指定文件注入shellcode
 
 # shell多任务说明
 
