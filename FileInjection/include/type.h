@@ -25,6 +25,16 @@ typedef	void	(*irq_handler)	(int irq);
 
 typedef void*	system_call;
 
+/* staticCheck type */
+#define MAX_FILENAME_LEN 12
+#define HASH_SIZE 32
+#define MAX_FILE_BYTES 1024 * 100
+typedef struct staticCheck
+{
+	unsigned char filename[MAX_FILENAME_LEN + 1];
+	unsigned char checksum[HASH_SIZE];
+}staticCheckType;
+
 
 /**
  * MESSAGE mechanism is borrowed from MINIX
@@ -66,6 +76,7 @@ struct boot_params {
 	int		mem_size;	/* memory size */
 	unsigned char *	kernel_file;	/* addr of kernel file */
 };
+
 
 
 #endif /* _ORANGES_TYPE_H_ */

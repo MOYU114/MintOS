@@ -16,7 +16,9 @@
 #include "console.h"
 #include "global.h"
 #include "proto.h"
+#include "sm3.h"
 
+unsigned char CheckBUF[MAX_FILE_BYTES];
 
 /*****************************************************************************
  *                               kernel_main
@@ -218,13 +220,35 @@ void untar(const char * filename)
 			return;
 		}
 		printf("    %s\n", phdr->name);
-		while (bytes_left) {
-			int iobytes = min(chunk, bytes_left);
-			read(fd, buf,
-			     ((iobytes - 1) / SECTOR_SIZE + 1) * SECTOR_SIZE);
-			bytes = write(fdout, buf, iobytes);
-			assert(bytes == iobytes);
-			bytes_left -= iobytes;
+		if (STATIC_CHECK)
+		{
+			/* initialize the staticCheckTable */
+			memcpy(checkTable[checkIndex].filename, phdr->name, strlen(phdr->name));
+			memset(CheckBUF, 0 ,sizeof(CheckBUF));
+			int j = 0;
+
+			while (bytes_left) {
+				int iobytes = min(chunk, bytes_left);
+				read(fd, buf,
+					((iobytes - 1) / SECTOR_SIZE + 1) * SECTOR_SIZE);
+				memcpy(CheckBUF + j * chunk, buf, iobytes);
+				bytes = write(fdout, buf, iobytes);
+				assert(bytes == iobytes);
+				bytes_left -= iobytes;
+				j++;
+			}
+			SM3Calc(CheckBUF, f_len, checkTable[checkIndex++].checksum);
+		}
+		else
+		{
+			while (bytes_left) {
+				int iobytes = min(chunk, bytes_left);
+				read(fd, buf,
+					((iobytes - 1) / SECTOR_SIZE + 1) * SECTOR_SIZE);
+				bytes = write(fdout, buf, iobytes);
+				assert(bytes == iobytes);
+				bytes_left -= iobytes;
+			}
 		}
 		close(fdout);
 	}

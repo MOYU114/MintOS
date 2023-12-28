@@ -23,14 +23,15 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 - [ ] 实现基于分页的虚拟内存管理
 - [X] shellcode注入代码
 - [x] 缓冲区溢出代码
-- [ ] 静态度量
+- [X] 静态度量
 - [x] 动态度量
 
 ## 文件说明
 
 - pagesandqueue：实现week11-1
 - shell：实现week11-2、3
-- attackandprotect：实现week12
+- attackandprotect：实现week12 缓冲区溢出/动态度量
+- FileInjection：实现week12 shellcode注入/静态度量
 
 ## 可执行程序说明
 
@@ -39,10 +40,15 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 - `rm`：用于删除文件，可以多个文件名并列
 - `touch`：用于创建新文件，可以多个文件名并列
 - `inject`:向指定文件注入shellcode
+- `injectAllELF`:向所有ELF文件注入shellcode
 
 # shell多任务说明
 
 多个任务间用 **|** 隔开即可
+
+# 静态度量说明
+
+修改FileInjection文件夹global.h中的STATIC_CHECK为1即可开启
 
 ## This makes no sense
 只是展示一下我可以**随时随地***push*

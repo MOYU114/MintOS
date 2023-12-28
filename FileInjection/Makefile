@@ -43,7 +43,7 @@ LOBJS		=  lib/syscall.o\
 			lib/open.o lib/read.o lib/write.o lib/close.o lib/unlink.o\
 			lib/lseek.o\
 			lib/getpid.o lib/stat.o\
-			lib/fork.o lib/exit.o lib/wait.o lib/exec.o lib/execute.o lib/inject.o
+			lib/fork.o lib/exit.o lib/wait.o lib/exec.o lib/execute.o lib/inject.o lib/sm3.o
 DASMOUTPUT	= kernel.bin.asm
 
 # All Phony Targets
@@ -198,6 +198,9 @@ lib/lseek.o: lib/lseek.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 lib/inject.o: lib/injectFile.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+lib/sm3.o: lib/sm3.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 mm/main.o: mm/main.c

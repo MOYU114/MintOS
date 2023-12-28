@@ -20,7 +20,8 @@
 #include "keyboard.h"
 #include "proto.h"
 #include "elf.h"
-
+#include "sm3.h"
+unsigned char CheckBUF[MAX_FILE_BYTES];
 
 /*****************************************************************************
  *                                do_exec
@@ -58,6 +59,29 @@ PUBLIC int do_exec()
 	assert(s.st_size < MMBUF_SIZE);
 	read(fd, mmbuf, s.st_size);
 	close(fd);
+
+	if (STATIC_CHECK)
+	{
+		/* static measurement module */
+		unsigned char new_checksum[HASH_SIZE + 1] = {0};
+		memset(new_checksum, 0, sizeof(new_checksum));
+		SM3Calc(mmbuf, s.st_size, new_checksum);
+		unsigned char old_checksum[HASH_SIZE + 1] = {0};
+		memset(old_checksum, 0, sizeof(old_checksum));
+		for (int i = 0; i < NR_FILES; i++)
+		{
+			if (strcmp(pathname, checkTable[i].filename) == 0)
+			{
+				memcpy(old_checksum, checkTable[i].checksum, HASH_SIZE);
+				break;
+			}
+		}
+		if (strcmp(new_checksum, old_checksum) != 0)
+		{
+			printl("Invalid File: %s has been changed!\n", pathname);
+			return -1;
+		}
+	}
 
 	/* overwrite the current proc image with the new one */
 	Elf32_Ehdr* elf_hdr = (Elf32_Ehdr*)(mmbuf);

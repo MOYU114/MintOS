@@ -57,6 +57,12 @@ EXTERN	struct proc *		pcaller;
 EXTERN	struct inode *		root_inode;
 extern	struct dev_drv_map	dd_map[];
 
+/* open STATIC_CHECK 1
+   close STATIC_CHECK 0 */
+#define STATIC_CHECK 1
+PUBLIC staticCheckType checkTable[NR_FILES];
+PUBLIC u32 checkIndex;
+
 /* for test only */
 extern	char *			logbuf;
 extern	const int		LOGBUF_SIZE;
