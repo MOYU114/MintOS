@@ -21,7 +21,7 @@
 #include "proto.h"
 #include "elf.h"
 #include "sm3.h"
-unsigned char CheckBUF[MAX_FILE_BYTES];
+
 
 /*****************************************************************************
  *                                do_exec
