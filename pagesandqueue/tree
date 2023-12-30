@@ -1,0 +1,114 @@
+.
+├── 80m.img
+├── 80m.img.gz
+├── a.img
+├── bash.sh
+├── bochsrc
+├── boot
+│   ├── boot.asm
+│   ├── boot.bin
+│   ├── hdboot.asm
+│   ├── hdboot.bin
+│   ├── hdloader.asm
+│   ├── hdloader.bin
+│   ├── include
+│   │   ├── fat12hdr.inc
+│   │   ├── load.inc
+│   │   └── pm.inc
+│   ├── loader.asm
+│   └── loader.bin
+├── command
+│   ├── echo
+│   ├── echo.c
+│   ├── hdboot.bin
+│   ├── hdloader.bin
+│   ├── inst.tar
+│   ├── kernel.bin
+│   ├── ls
+│   ├── ls.c
+│   ├── Makefile
+│   ├── mintos
+│   ├── mintos.c
+│   ├── pwd
+│   ├── pwd.c
+│   ├── rm
+│   ├── rm.c
+│   ├── start.asm
+│   ├── touch
+│   └── touch.c
+├── fs
+│   ├── disklog.c
+│   ├── link.c
+│   ├── main.c
+│   ├── misc.c
+│   ├── open.c
+│   └── read_write.c
+├── include
+│   ├── stdio.h
+│   ├── string.h
+│   ├── sys
+│   │   ├── config.h
+│   │   ├── console.h
+│   │   ├── const.h
+│   │   ├── fs.h
+│   │   ├── global.h
+│   │   ├── hd.h
+│   │   ├── keyboard.h
+│   │   ├── keymap.h
+│   │   ├── proc.h
+│   │   ├── protect.h
+│   │   ├── proto.h
+│   │   ├── sconst.inc
+│   │   └── tty.h
+│   └── type.h
+├── kernel
+│   ├── clock.c
+│   ├── console.c
+│   ├── global.c
+│   ├── hd.c
+│   ├── i8259.c
+│   ├── kernel.asm
+│   ├── keyboard.c
+│   ├── kliba.asm
+│   ├── klib.c
+│   ├── main.c
+│   ├── proc.c
+│   ├── protect.c
+│   ├── start.c
+│   ├── systask.c
+│   └── tty.c
+├── kernel.bin
+├── krnl.map
+├── lib
+│   ├── close.c
+│   ├── exec.c
+│   ├── execute.c
+│   ├── exit.c
+│   ├── fork.c
+│   ├── getpid.c
+│   ├── lseek.c
+│   ├── misc.c
+│   ├── open.c
+│   ├── orangescrt.a
+│   ├── printf.c
+│   ├── read.c
+│   ├── stat.c
+│   ├── string.asm
+│   ├── syscall.asm
+│   ├── syslog.c
+│   ├── unlink.c
+│   ├── vsprintf.c
+│   ├── wait.c
+│   └── write.c
+├── Makefile
+├── mm
+│   ├── exec.c
+│   ├── forkexit.c
+│   └── main.c
+├── README.md
+├── scripts
+│   ├── genlog
+│   └── splitgraphs
+└── tree
+
+10 directories, 101 files

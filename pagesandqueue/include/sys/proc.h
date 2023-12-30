@@ -37,8 +37,8 @@ struct proc {
         int ticks;                 /* remained ticks */
         int priority;
 		//add
-		int q;				//which queue
-		int pos;			//pos in queue
+		int is_in_q;		//is in queue
+		int pos;			//which queue
 		int time;			//time left
 
 	/* u32 pid;                   /\* process id passed in from MM *\/ */

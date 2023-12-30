@@ -60,7 +60,7 @@ int in_queue(struct proc* p){
 	crr = queue+p->pos;//add to the rear
 	crr->task_q[crr->rear]=p;
 	crr->rear= (crr->rear+1)%QUEUE_LEN;
-	p->q =1;
+	p->is_in_q =1;
 	crr->len+=1;
 }
 //pop queue
@@ -68,7 +68,7 @@ int pop_queue(struct proc* p){
 	QUEUE* crr;
 	crr = queue+p->pos;
 	crr->front=(crr->front+1)%QUEUE_LEN;
-	p->q =0;
+	p->is_in_q =0;
 	crr->len-=1;
 }
 
@@ -78,7 +78,7 @@ struct proc* get_one_proc(){
 	int crr_pos=0;
 	for ( p = &FIRST_PROC; p <=&LAST_PROC; p++)
 	{
-		if(p->p_flags==0&&p->q==0&&(p!=p_proc_ready || queue->len == 0)){
+		if(p->p_flags==0&&p->is_in_q==0&&(p!=p_proc_ready || queue->len == 0)){
 			p->ticks=queue->ticks;
 			p->pos=0;
 			p->time=100;

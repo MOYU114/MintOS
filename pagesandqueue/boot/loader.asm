@@ -975,10 +975,16 @@ TestAllocAndFree:
 	xchg bx,bx
 	mov eax,4
 	call alloc_pages
+	mov	ah, 0Fh				; 0000: 黑底    1111: 白字
+	mov	al, 'A'
+	mov	[gs:((80 * 0 + 39) * 2)], ax	; 屏幕第 0 行, 第 39 列。
 	xchg bx,bx
 	mov eax,ebx
 	mov ebx,4
 	call free_pages
+	mov	ah, 0Fh				; 0000: 黑底    1111: 白字
+	mov	al, 'F'
+	mov	[gs:((80 * 0 + 39) * 2)], ax	; 屏幕第 0 行, 第 39 列。
 	xchg bx,bx
 	ret
 
