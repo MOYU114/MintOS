@@ -30,7 +30,7 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 
 - pagesandqueue：实现week11-1
 - shell：实现week11-2、3
-- attackandprotect：实现week12 缓冲区溢出/动态度量
+- StackOverflow：实现week12 缓冲区溢出/动态度量
 - FileInjection：实现week12 shellcode注入/静态度量
 
 ## 可执行程序说明
@@ -41,7 +41,7 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 - `touch`：用于创建新文件，可以多个文件名并列
 - `inject`:向指定文件注入shellcode
 - `injectAllELF`:向所有ELF文件注入shellcode
-
+- `stackoverflow`:尝试栈溢出
 # shell多任务说明
 
 多个任务间用 **|** 隔开即可
