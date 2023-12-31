@@ -581,20 +581,22 @@ PUBLIC void dump_msg(const char * title, MESSAGE* m)
 		);
 }
 #define BREAKPOINT __asm__ __volatile__("xchg %bx, %bx")
+
+#define STOP __asm__ __volatile__("hlt")
 void retaddress_error() {
-	
-    //disp_str("\n\n\n\n\n\n\n\n\n\n\n");
+
     disp_str("[error]return address Error: ");
     disp_str(p_proc_ready->name);
     disp_str(" can cause overflow\n");
+	//BREAKPOINT;
+	//STOP;
 }
 
 PUBLIC int sys_check_stack_overflow(int _unused,
                            int _unused2,
                            char* _unused3,
                            struct proc* p_proc) {
-	//disp_str("test");
-	//BREAKPOINT;
+
     int ss = p_proc->regs.ss;  // 由ss获得描述符
     int base = reassembly(p_proc->ldts[ss >> 3].base_high, 24,
                           p_proc->ldts[ss >> 3].base_mid, 16,
@@ -602,19 +604,17 @@ PUBLIC int sys_check_stack_overflow(int _unused,
 	//查找栈基址和返回地址所在位置
     int ebp = p_proc->regs.ebp;
     int retaddress_offset = ebp + 4;
-	//计算原来的返回地址
+	//计算返回地址
 	unsigned int retaddr = *(int*)(retaddress_offset + base);
-	//BREAKPOINT;
-    if (retaddr > (PROC_IMAGE_SIZE_DEFAULT - PROC_ORIGIN_STACK)) {
-        // 如果超过栈了
-		//BREAKPOINT;
-		//disp_str("p1");
-        retaddress_error();
-    }
+	//计算之前的ebp和现在的ebp
+	unsigned int ori_ebp = *(int*)(ebp + base);
+	unsigned int crr_ebp = ebp;
+
+	if (ori_ebp<crr_ebp-PROC_ORIGIN_STACK||ori_ebp>crr_ebp+PROC_ORIGIN_STACK){
+		//如果栈中记录的原来的ebp大小不正常（超过当前ebp前后一个栈大小）
+		retaddress_error();
+	}
     if (retaddr - 0x1000 > 0x1500 || retaddr < 0x1000) {  //距离跳转过长
-		//BREAKPOINT;
-		//disp_str("p2");
         retaddress_error();
     }
-	//disp_str("p0");
 }
