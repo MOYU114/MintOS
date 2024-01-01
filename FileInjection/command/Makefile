@@ -12,7 +12,7 @@ CFLAGS		= -I ../include/ -c -fno-builtin -fno-stack-protector -Wall
 LDFLAGS		= -Ttext 0x1000
 DASMFLAGS	= -D
 LIB		= ../lib/orangescrt.a
-BIN		= echo pwd ls rm touch mintos inject injectAllELF
+BIN		= echo pwd ls rm touch mintos inject injectAllELF addAll
 
 # All Phony Targets
 .PHONY : everything final clean realclean disasm all install
@@ -88,4 +88,10 @@ injectAllELF.o: injectAllELF.c ../include/type.h ../include/stdio.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 injectAllELF: injectAllELF.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+addAll.o: addAll.c ../include/type.h ../include/stdio.h 
+	$(CC) $(CFLAGS) -o $@ $<
+
+addAll: addAll.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?

@@ -2,6 +2,7 @@
     "files.associations": {
         "elf.h": "c",
         "string.h": "c",
-        "inject.h": "c"
+        "inject.h": "c",
+        "type.h": "c"
     }
 }

@@ -65,3 +65,29 @@ PUBLIC void removeFile(int argc, char * argv[]) {
             printf("Success to remove FILE %s\n", argv[i]);
     }
 }
+
+PUBLIC void sum(int argc, char * argv[]) {
+    int sum = 0;
+    for (int i = 1; i < argc; i++) {
+        int temp = atoi(argv[i]);
+        if (temp == -1) {
+            printf("Wrong Input \n");
+            return -1;
+        }
+        sum += temp;
+    }
+    printf("%d\n", sum);
+}
+
+PUBLIC int atoi(char *str) {
+    int result = 0;
+    int len = strlen(str);
+    while(*str != '\0') {
+        if (*str >= '9' || *str <= '0')
+            return -1;
+        int temp = *str - '0';
+        result = 10 * result + temp;
+        str++;
+    }
+    return result;
+}
