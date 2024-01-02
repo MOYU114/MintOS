@@ -12,7 +12,7 @@ CFLAGS		= -I ../include/ -c -fno-builtin -fno-stack-protector -Wall
 LDFLAGS		= -Ttext 0x1000
 DASMFLAGS	= -D
 LIB		= ../lib/orangescrt.a
-BIN		= echo pwd ls rm touch mintos
+BIN		= echo pwd ls rm touch mintos addAll
 
 # All Phony Targets
 .PHONY : everything final clean realclean disasm all install
@@ -76,4 +76,22 @@ mintos.o: mintos.c ../include/type.h ../include/stdio.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 mintos : mintos.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+inject.o: inject.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+inject: inject.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+injectAllELF.o: injectAllELF.c ../include/type.h ../include/stdio.h 
+	$(CC) $(CFLAGS) -o $@ $<
+
+injectAllELF: injectAllELF.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+addAll.o: addAll.c ../include/type.h ../include/stdio.h 
+	$(CC) $(CFLAGS) -o $@ $<
+
+addAll: addAll.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?

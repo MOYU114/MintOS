@@ -296,6 +296,7 @@ void shabby_shell(const char * tty_name)
 			while(strcmp(argv[i], "|") != 0 && i < argc) {
 				childArgv[index++] = argv[i++];
 			}
+			childArgv[index] = 0;
 			int fd = open(childArgv[0], O_RDWR);
 			if (fd == -1) {
 				if (rdbuf[0]) {

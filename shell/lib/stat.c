@@ -64,10 +64,11 @@ PUBLIC int list()
 	struct dir_entry * pde = (struct dir_entry *)msg.BUF;
 	int i;
 	char filename[MAX_FILENAME_LEN+1] = {0};
-	for(i = 0; i < msg.CNT; i++) {
+	for(i = 0; i < msg.CNT; i++, pde++) {
 		memcpy((void*)filename, (void*)pde->name, MAX_FILENAME_LEN);
+        if (pde->inode_nr == 0)
+            continue;
 		printf("%5d\t\t%s\n", pde->inode_nr, filename);
-		pde++;
 	}
 
 	return msg.RETVAL;

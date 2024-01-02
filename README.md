@@ -20,11 +20,12 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 - [x] 整合代码
 - [x] 编写可执行程序
 - [x] 扩展shell支持多任务
-- [ ] 实现基于分页的虚拟内存管理
+- [x] 实现基于分页的虚拟内存管理(maybe)
 - [X] shellcode注入代码
 - [x] 缓冲区溢出代码
 - [X] 静态度量
 - [x] 动态度量
+- [x] 体系扩充(maybe)
 
 ## 文件说明
 
@@ -39,6 +40,7 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 - `list`：用于展示当前目录下的所有文件
 - `rm`：用于删除文件，可以多个文件名并列
 - `touch`：用于创建新文件，可以多个文件名并列
+- `addAll`: 累加
 - `inject`:向指定文件注入shellcode
 - `injectAllELF`:向所有ELF文件注入shellcode
 - `stackoverflow`:尝试栈溢出

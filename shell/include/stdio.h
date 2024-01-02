@@ -156,6 +156,7 @@ PUBLIC void  hello();
 PUBLIC void  echoString(int argc, char * argv[]);
 PUBLIC void  touch(int argc, char * argv[]);
 PUBLIC void  removeFile(int argc, char * argv[]);
+PUBLIC void  sum(int argc, char * argv[]);
 
 
 
