@@ -21,16 +21,16 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 - [x] 编写可执行程序
 - [x] 扩展shell支持多任务
 - [x] 实现基于分页的虚拟内存管理(maybe)
-- [X] shellcode注入代码
+- [x] shellcode注入代码
 - [x] 缓冲区溢出代码
-- [X] 静态度量
+- [x] 静态度量
 - [x] 动态度量
-- [x] 体系扩充(maybe)
+- [x] 体系扩充(hook)
 
 ## 文件说明
 
 - pagesandqueue：实现week11-1
-- shell：实现week11-2、3
+- shell：实现week11-2、3，week12-体系扩充
 - StackOverflow：实现week12 缓冲区溢出/动态度量
 - FileInjection：实现week12 shellcode文件注入/静态度量
 
@@ -44,6 +44,7 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 - `inject`:向指定文件注入shellcode
 - `injectAllELF`:向所有ELF文件注入shellcode
 - `stackoverflow`:尝试栈溢出
+- `hook`:用于劫持系统调用
   
 ## shell多任务说明
 
@@ -53,10 +54,4 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 
 修改FileInjection文件夹global.h中的STATIC_CHECK为1即可开启
 
-## This makes no sense
-只是展示一下我可以**随时随地***push*
 
-## This makes no sense, too
-只是展示一下我**也**可以**随时随地***push*
-## This also makes no sense
-只是展示一下我的***笔记本*****也**可以**随时随地***push*
