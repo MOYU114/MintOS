@@ -65,3 +65,4 @@ extern	const int		LOGDISKBUF_SIZE;
 
 //multi queue
 PUBLIC QUEUE queue[3];
+#define BREAKPOINT __asm__ __volatile__("xchg %bx, %bx")

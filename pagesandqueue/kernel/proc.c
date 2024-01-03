@@ -35,7 +35,6 @@ PUBLIC void schedule()
 {
 	struct proc*	p;
 	int		greatest_ticks = 0;
-
 	while (!greatest_ticks) {
 		for (p = &FIRST_PROC; p <= &LAST_PROC; p++) {
 			if (p->p_flags == 0) {
@@ -80,8 +79,6 @@ struct proc* get_one_proc(){
 	{
 		if(p->p_flags==0&&p->is_in_q==0&&(p!=p_proc_ready || queue->len == 0)){
 			p->ticks=queue->ticks;
-			p->pos=0;
-			p->time=100;
 			in_queue(p);
 
 		}
@@ -91,7 +88,7 @@ struct proc* get_one_proc(){
 		crr_q=queue+crr_pos;
 		int length=0;
 		int point =crr_q->front;
-		while(crr_q->task_q[point]->p_flags!=0&&length<crr_q->len){
+		while(crr_q->task_q[point]->p_flags!=0&&length<crr_q->len){// can't run, pop and in,later run
 			pop_queue(crr_q->task_q[point]);
 			in_queue(crr_q->task_q[point]);
 			length+=1;
@@ -109,10 +106,11 @@ PUBLIC void mulit_queue_schedule()
 	struct proc *p;
 	struct proc *next;
 	next=get_one_proc();
-	if(p_proc_ready->ticks&&p_proc_ready->time&&next->pos>=p_proc_ready->pos){
+	if(p_proc_ready->ticks&&p_proc_ready->time&&next->pos>=p_proc_ready->pos){//
 		return ;
 	}
-	if(p_proc_ready->time==0){//end
+	if(p_proc_ready->time==0){//end,but time reset
+		p_proc_ready->time=p->priority;
 		p_proc_ready=next;
 		pop_queue(next);
 		return;
@@ -120,6 +118,9 @@ PUBLIC void mulit_queue_schedule()
 	if(p_proc_ready->ticks==0){//ticks used up, in queue
 		if(p_proc_ready->pos < 2){
 			p_proc_ready->pos+=1;
+		}
+		else{
+			p_proc_ready->pos=0;//防止饥饿，将时间片耗尽的第三队列运行的程序转到第一队列
 		}
 		p_proc_ready->ticks =(queue+p_proc_ready->pos)->ticks;
 

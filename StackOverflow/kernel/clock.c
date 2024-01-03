@@ -49,7 +49,7 @@ PUBLIC void clock_handler(int irq)
 	}
 	//check_overflow();
 	if(p_proc_ready - &FIRST_PROC >= 0xb){
-		//check_overflow();
+		check_overflow();
 	}
 
 	schedule();

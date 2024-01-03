@@ -98,6 +98,6 @@ PUBLIC	const int	LOGDISKBUF_SIZE	= 0x100000;
 
 //multi queue init 
 //time ticks=2,5,10
-PUBLIC QUEUE queue[3]= {{{0}, 0, 0, 0, 2},
-                        {{0}, 0, 0, 0, 5},
-                        {{0}, 0, 0, 0, 10}};
+PUBLIC QUEUE queue[3]= {{{0}, 0, 0, 0, 1},
+                        {{0}, 0, 0, 0, 2},
+                        {{0}, 0, 0, 0, 5}};

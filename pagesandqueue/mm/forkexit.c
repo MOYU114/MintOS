@@ -128,6 +128,10 @@ PUBLIC int do_fork()
 	m.RETVAL = 0;
 	m.PID = 0;
 	send_recv(SEND, child_pid, &m);
+	//init the pram for queue
+	proc_table[child_pid].is_in_q=0;
+	proc_table[child_pid].pos=0;
+	proc_table[child_pid].time=proc_table[child_pid].priority;//use prio to be the time left
 
 	enable_int();
 

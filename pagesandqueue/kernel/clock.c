@@ -53,10 +53,10 @@ PUBLIC void clock_handler(int irq)
     if (p_proc_ready->time)
         p_proc_ready->time--;
 
-
+	//schedule();
 	mulit_queue_schedule();
-    disp_int(p_proc_ready - &FIRST_PROC);
-    (",");
+    //disp_int(p_proc_ready - &FIRST_PROC);
+    //(",");
 
 }
 

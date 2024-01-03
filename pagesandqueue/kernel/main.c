@@ -17,7 +17,6 @@
 #include "global.h"
 #include "proto.h"
 
-
 /*****************************************************************************
  *                               kernel_main
  *****************************************************************************/
@@ -116,6 +115,11 @@ PUBLIC int kernel_main()
 			p->filp[j] = 0;
 
 		stk -= t->stacksize;
+
+		//add for queue
+		p->is_in_q=0;
+		p->pos=0;
+		p->time=p->priority;//use prio to be the time left
 	}
 
 	k_reenter = 0;
@@ -257,7 +261,6 @@ void shabby_shell(const char * tty_name)
 	assert(fd_stdout == 1);
 
 	char rdbuf[128];
-
 	while (1) {
 		write(1, "$ ", 2);
 		int r = read(0, rdbuf, 70);
@@ -384,6 +387,7 @@ void Init()
 void TestA()
 {
 	for(;;);
+	//milli_delay(10000);
 }
 
 /*======================================================================*
@@ -392,6 +396,7 @@ void TestA()
 void TestB()
 {
 	for(;;);
+	//milli_delay(10000);
 }
 
 /*======================================================================*
@@ -400,6 +405,7 @@ void TestB()
 void TestC()
 {
 	for(;;);
+	//milli_delay(10000);
 }
 
 /*****************************************************************************

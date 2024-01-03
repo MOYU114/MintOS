@@ -29,7 +29,7 @@ Messaget ata0-0t could not open hard drive image file '80m,img'
 
 ## 文件说明
 
-- pagesandqueue：实现week11-1
+- pagesandqueue：实现week11-1，代码整合尝试
 - shell：实现week11-2、3，week12-体系扩充
 - StackOverflow：实现week12 缓冲区溢出/动态度量
 - FileInjection：实现week12 shellcode文件注入/静态度量
