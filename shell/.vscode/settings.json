@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "type.h": "c",
-        "string.h": "c",
-        "fs.h": "c"
-    }
-}
