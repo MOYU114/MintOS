@@ -83,7 +83,7 @@ PUBLIC int atoi(char *str) {
     int result = 0;
     int len = strlen(str);
     while(*str != '\0') {
-        if (*str >= '9' || *str <= '0')
+        if (*str > '9' || *str < '0')
             return -1;
         int temp = *str - '0';
         result = 10 * result + temp;
