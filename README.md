@@ -1,10 +1,10 @@
 # MintOS
 
-本实验参考OrangeS代码，调用其chapter11/a/代码。
+本实验参考OrangeS代码，扩展其chapter11/a/代码。
 
 ## 使用说明
 
-调用时直接输入`$ sh bash.sh`，因为多需要make command文件。
+编译时直接输入`$ sh bash.sh`，因为多需要make command文件。
 
 遇到
 
